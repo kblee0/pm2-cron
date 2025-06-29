@@ -1,0 +1,20 @@
+{
+  "name": "pm2-cron",
+  "version": "1.0.0",
+  "description": "PM2 module that launches apps on a cron schedule",
+  "main": "app.js",
+  "scripts": {},
+  "dependencies": {
+    "console-stamp": "latest",
+    "node-schedule": "latest",
+    "pm2": "latest",
+    "pmx": "latest"
+  },
+  "license": "MIT",
+  "apps": [
+    {
+      "name": "pm2-cron",
+      "script": "app.js"
+    }
+  ]
+}
