@@ -1,15 +1,23 @@
 {
   "name": "pm2-cron",
-  "version": "1.0.0",
-  "description": "PM2 module that launches apps on a cron schedule",
+  "version": "2.7.0",
+  "description": "Module to pm2 application scheduler",
   "main": "app.js",
-  "scripts": {},
   "dependencies": {
-    "console-stamp": "latest",
-    "node-schedule": "latest",
+    "console-stamp": "^3.1.2",
+    "node-schedule": "^1.3.1",
     "pm2": "latest",
     "pmx": "latest"
   },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "kblee0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kblee0/pm2-cron.git"
+  },
+  "homepage": "https://github.com/kblee0/pm2-cron",
   "license": "MIT",
   "apps": [
     {
