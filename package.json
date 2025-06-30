@@ -1,6 +1,6 @@
 {
   "name": "pm2-cron",
-  "version": "2.7.0",
+  "version": "0.1.0",
   "description": "Module to pm2 application scheduler",
   "main": "app.js",
   "dependencies": {
