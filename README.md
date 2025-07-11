@@ -2,7 +2,7 @@
 
 > PM2 프로세스를 cron 스케줄에 따라 자동으로 재시작하는 PM2 플러그인
 
-`pm2-cron-restart`는 [`node-schedule`](https://www.npmjs.com/package/node-schedule)을 사용하여, 설정한 cron 표현식에 따라 지정된 PM2 프로세스를 자동으로 주기적으로 `restart`합니다.
+`pm2-cron`은 [`node-schedule`](https://www.npmjs.com/package/node-schedule)을 사용하여, 설정한 cron 표현식에 따라 지정된 PM2 프로세스를 자동으로 주기적으로 `restart`합니다.
 
 ## 설치 방법
 
