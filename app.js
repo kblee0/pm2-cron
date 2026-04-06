@@ -23,17 +23,31 @@ process.on('exit',() => {
     pm2.disconnect()
 });
 
+let isInitialRun = true;
+
 function schedule_jobs(cron) {
     Object.keys(cron).forEach((job) => {
         console.log('schedule job: ', job, "cron", cron[job]);
         scheduler.scheduleJob(cron[job], () => {
-            pm2.restart(job, (err, proc) => {
-                if (err) {
-                    console.error(`${job} job start failed.`, err);
+            if (isInitialRun) {
+                console.info(`${job} skip initial run`);
+                return;
+            }
+            pm2.describe(job, (err, proc) => {
+                if (proc && proc[0].pm2_env.status === 'online') {
+                    console.warn(`${job} already running. skip.`);
                     return;
                 }
-                console.info(`${job} job started.`);
+
+                pm2.start(job, (err, proc) => {
+                    if (err) {
+                        console.error(`${job} job start failed.`, err);
+                        return;
+                    }
+                    console.info(`${job} job started.`);
+                });
             });
         });
     });
+    isInitialRun = false;
 }
