@@ -30,19 +30,21 @@ process.on('exit',() => {
 
 function schedule_jobs(cron) {
     Object.keys(cron).forEach((job) => {
-        console.log('schedule job: ', job, "cron", cron[job]);
+        console.log('register job: ', job, "cron", cron[job]);
         scheduler.scheduleJob(cron[job], () => {
-            if (Date.now() - registrationTime < 5000) {
-                console.info(`${job} skip initial run`);
-                return;
-            }
             pm2.describe(job, (err, proc) => {
-                if (proc && proc.length > 0 && proc[0].pm2_env) {
-                    const status = proc[0].pm2_env.status;
-                    if (status === 'online' || status === 'launching') {
-                        console.warn(`${job} already running. skip.`);
-                        return;
-                    }
+                if (err) {
+                    console.error(`[${job}] Describe error:`, err);
+                    return;
+                }
+
+                const isRunning = proc && proc.length > 0 &&
+                                 (proc[0].pm2_env.status === 'online' ||
+                                  proc[0].pm2_env.status === 'launching');
+
+                if (isRunning) {
+                    console.warn(`${job} already running. skip.`);
+                    return;
                 }
 
                 pm2.start(job, (err, proc) => {
