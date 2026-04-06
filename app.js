@@ -4,6 +4,7 @@ util._extend = Object.assign;
 var pmx     	= require('pmx');
 var pm2     	= require('pm2');
 var scheduler	= require('node-schedule');
+const registrationTime = Date.now();
 
 require('console-stamp')(console, { format: ':date(yyyy/mm/dd HH:MM:ss.l)' });
 
@@ -15,7 +16,11 @@ pm2.connect(function(err) {
         process.exit(1);
     }
     console.info("PM2 Connected...");
-    schedule_jobs(conf.module_conf);
+    if (conf && conf.module_conf) {
+        schedule_jobs(conf.module_conf);
+    } else {
+        console.error("No module configuration found.");
+    }
 });
 
 process.on('exit',() => {
@@ -23,20 +28,21 @@ process.on('exit',() => {
     pm2.disconnect()
 });
 
-let isInitialRun = true;
-
 function schedule_jobs(cron) {
     Object.keys(cron).forEach((job) => {
         console.log('schedule job: ', job, "cron", cron[job]);
         scheduler.scheduleJob(cron[job], () => {
-            if (isInitialRun) {
+            if (Date.now() - registrationTime < 5000) {
                 console.info(`${job} skip initial run`);
                 return;
             }
             pm2.describe(job, (err, proc) => {
-                if (proc && proc[0].pm2_env.status === 'online') {
-                    console.warn(`${job} already running. skip.`);
-                    return;
+                if (proc && proc.length > 0 && proc[0].pm2_env) {
+                    const status = proc[0].pm2_env.status;
+                    if (status === 'online' || status === 'launching') {
+                        console.warn(`${job} already running. skip.`);
+                        return;
+                    }
                 }
 
                 pm2.start(job, (err, proc) => {
@@ -49,5 +55,4 @@ function schedule_jobs(cron) {
             });
         });
     });
-    isInitialRun = false;
 }
